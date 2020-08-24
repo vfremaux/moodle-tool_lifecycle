@@ -388,7 +388,7 @@ class workflow_settings {
      * @throws \moodle_exception
      */
     private function view_plugins_table() {
-        global $OUTPUT, $PAGE;
+        global $OUTPUT, $PAGE, $DB;
 
         // Set up the table.
         $this->view_header();
@@ -422,7 +422,21 @@ class workflow_settings {
         $table = new step_table('tool_lifecycle_workflows', $this->workflowid);
         $table->out(50, false);
 
+        $wftriggers = $DB->get_records('tool_lifecycle_trigger', ['workflowid' => $this->workflowid]);
+        if ($wftriggers) {
+            $this->view_trigger_preview_link($this->workflowid);
+        }
+
         $this->view_footer();
+    }
+
+    protected function view_trigger_preview_link($workflowid) {
+        global $OUTPUT;
+
+        $template = new \StdClass;
+
+        $template->triggerpreviewurl = new \moodle_url('/admin/tool/lifecycle/previewtriggerselection.php', ['workflowid' => $workflowid]);
+        echo $OUTPUT->render_from_template('tool_lifecycle/trigger_preview_link', $template);
     }
 
     /**

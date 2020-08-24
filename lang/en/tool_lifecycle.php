@@ -61,6 +61,16 @@ $string['invalid_workflow_cannot_be_activated'] = 'The workflow definition is in
 $string['trigger_does_not_exist'] = 'The requested trigger could not be found.';
 $string['cannot_trigger_workflow_manually'] = 'The requested workflow could not be triggered manually.';
 $string['error_wrong_trigger_selected'] = 'You tried to request a non-manual trigger.';
+$string['workflowpreview'] = 'Workflow course selection preview {$a}';
+$string['nocoursematch'] = 'No course matching the triggers.';
+$string['backtoworkflow'] = 'Back to workflow';
+$string['previewworkflowselection'] = 'Preview course list selection';
+$string['pertrigger'] = 'Per trigger';
+$string['forworkflow'] = 'For the workflow';
+$string['totalcourses'] = 'Total courses';
+$string['totalexcluded'] = 'Total excluded';
+$string['results'] = 'Resulting courses';
+$string['sitecourseexclude'] = 'Site course exclusion';
 
 $string['lifecycle_task'] = 'Run the life cycle processes';
 $string['lifecycle_cleanup_task'] = 'Delete old delay entries for life cycle workflows';

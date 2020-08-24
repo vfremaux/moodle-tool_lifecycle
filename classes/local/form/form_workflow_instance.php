@@ -69,7 +69,7 @@ class form_workflow_instance extends \moodleform {
         $mform->addElement('header', 'general_settings_header', get_string('general_settings_header', 'tool_lifecycle'));
 
         $elementname = 'title';
-        $mform->addElement('text', $elementname, get_string('workflow_title', 'tool_lifecycle'));
+        $mform->addElement('text', $elementname, get_string('workflow_title', 'tool_lifecycle'), ['size' => 80, 'maxlength' => 255]);
         $mform->addHelpButton($elementname, 'workflow_title', 'tool_lifecycle');
         $mform->setType($elementname, PARAM_TEXT);
         if (isset($this->workflow)) {
@@ -77,7 +77,7 @@ class form_workflow_instance extends \moodleform {
         }
 
         $elementname = 'displaytitle';
-        $mform->addElement('text', $elementname, get_string('workflow_displaytitle', 'tool_lifecycle'));
+        $mform->addElement('text', $elementname, get_string('workflow_displaytitle', 'tool_lifecycle'), ['size' => 120, 'maxlength' => 255]);
         $mform->addHelpButton($elementname, 'workflow_displaytitle', 'tool_lifecycle');
         $mform->setType($elementname, PARAM_TEXT);
         if (isset($this->workflow)) {

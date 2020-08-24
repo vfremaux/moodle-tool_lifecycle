@@ -139,6 +139,9 @@ if ($mform->is_cancelled()) {
     }
 }
 
+// NEEDS COMPLETE REDRAW FOR MYSQL COMPATIBILITY
+// FULL JOIN NOT SUPPORTED AND UNION SQL NOT HANDLED CORRECTLY BY tablelib.php
+
 $table = new delayed_courses_table($data);
 $table->define_baseurl($PAGE->url);
 

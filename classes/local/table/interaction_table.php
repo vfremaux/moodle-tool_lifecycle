@@ -40,7 +40,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class interaction_table extends \table_sql {
+abstract class interaction_table extends lifecycle_table {
 
     /**
      * Constructor for interaction_table.

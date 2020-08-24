@@ -116,7 +116,7 @@ class form_trigger_instance extends \moodleform {
         $mform->addElement('header', 'general_settings_header', get_string('general_settings_header', 'tool_lifecycle'));
 
         $elementname = 'instancename';
-        $mform->addElement('text', $elementname, get_string('trigger_instancename', 'tool_lifecycle'));
+        $mform->addElement('text', $elementname, get_string('trigger_instancename', 'tool_lifecycle'), ['size' => 80, 'maxlength' => 255]);
         $mform->addHelpButton($elementname, 'trigger_instancename', 'tool_lifecycle');
         $mform->setType($elementname, PARAM_TEXT);
 

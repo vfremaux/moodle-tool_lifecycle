@@ -26,6 +26,7 @@ namespace tool_lifecycle\local\table;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot.'/admin/tool/lifecycle/classes/local/table/lifecycle_table.php');
 
 /**
  * Table listing active processes
@@ -34,7 +35,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class active_processes_table extends \table_sql {
+class active_processes_table extends lifecycle_table {
 
     /**
      * Constructor for active_processes_table.

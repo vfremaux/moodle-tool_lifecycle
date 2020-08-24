@@ -111,7 +111,7 @@ class form_step_instance extends \moodleform {
         $mform->addElement('header', 'general_settings_header', get_string('general_settings_header', 'tool_lifecycle'));
 
         $elementname = 'instancename';
-        $mform->addElement('text', $elementname, get_string('step_instancename', 'tool_lifecycle'));
+        $mform->addElement('text', $elementname, get_string('step_instancename', 'tool_lifecycle'), ['size' => 80, 'maxlength' => 255]);
         $mform->addHelpButton($elementname, 'step_instancename', 'tool_lifecycle');
         $mform->setType($elementname, PARAM_TEXT);
 
@@ -185,6 +185,10 @@ class form_step_instance extends \moodleform {
             // The group buttonar is the array of submit buttons. For inactive workflows this is only a cancel button.
             $mform->hardFreezeAllVisibleExcept(array('buttonar'));
         }
+    }
+
+    public function get_workflowid() {
+        return $this->workflowid;
     }
 
 }

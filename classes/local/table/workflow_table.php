@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/tablelib.php');
 require_once(__DIR__ . '/../../../lib.php');
+require_once($CFG->dirroot.'/admin/tool/lifecycle/classes/local/table/lifecycle_table.php');
 
 /**
  * Table listing all active automatically triggered workflows.
@@ -41,7 +42,7 @@ require_once(__DIR__ . '/../../../lib.php');
  * @copyright  2018 Jan Dageförde WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class workflow_table extends \table_sql {
+abstract class workflow_table extends lifecycle_table {
 
     /**
      * Constructor for workflow_table.

@@ -68,4 +68,26 @@ class tool_lifecycle_renderer extends plugin_renderer_base {
         $this->footer();
     }
 
+    public function print_preview_globals($coursecount, $exclusioncount, $triggers) {
+        $template = new StdClass;
+
+        $template->totalcourses = $coursecount;
+        $template->totalexcluded = $exclusioncount;
+
+        $triggertpl = new StdClass;
+        $triggertpl->name = get_string('sitecourseexclude', 'tool_lifecycle');
+        $triggertpl->excluded = 1;
+        $template->triggers[] = $triggertpl;
+
+        foreach ($triggers as $t) {
+            $template->hastriggers = true;
+            $triggertpl = new StdClass;
+            $triggertpl->name = $t->instancename;
+            $triggertpl->excluded = 0 + $t->countexcluded;
+            $template->triggers[] = $triggertpl;
+        }
+
+        return $this->output->render_from_template('tool_lifecycle/preview_globals', $template);
+    }
+
 }

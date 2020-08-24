@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Duplicate step';
+$string['pluginname'] = 'Duplicate Step';
 
 $string['duplicate_form'] = 'Enter data';
 
@@ -30,5 +30,6 @@ $string['duplicate_course_header'] = 'Duplicate course';
 $string['status_message_duplication'] = 'Duplicated course will be available shortly.';
 $string['status_message_form'] = 'Additional information required';
 $string['action_new_course_data'] = '{$a} supplied new course name';
+$string['privacy:metadata'] = 'The Duplicate Step plugin does not store any personal data.';
 
 $string['duplicate:enterdata'] = 'Enter data for course duplication';

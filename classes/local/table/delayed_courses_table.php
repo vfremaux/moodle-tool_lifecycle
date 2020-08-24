@@ -26,6 +26,7 @@ namespace tool_lifecycle\local\table;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot.'/admin/tool/lifecycle/classes/local/table/lifecycle_table.php');
 
 /**
  * Table listing all delayed courses
@@ -34,7 +35,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @copyright  2019 Justus Dieckmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class delayed_courses_table extends \table_sql {
+class delayed_courses_table extends lifecycle_table {
 
     /** @var null|int|string $workflow workflow to filter for. Might be workflowid or "global" to filter for global delays. */
     private $workflow;
@@ -67,17 +68,22 @@ class delayed_courses_table extends \table_sql {
         }
 
         if ($selectseperatedelays) {
-            $fields .= 'dw.workflowid, w.title as workflow, dw.delayeduntil AS workflowdelay, maxtable.wfcount AS workflowcount, ';
+            $fieldsl = $fields.'dw.workflowid, w.title as workflow, dw.delayeduntil AS workflowdelay, maxtablel.wfcount AS workflowcount, ';
+            $fieldsr = $fields.'dw.workflowid, w.title as workflow, dw.delayeduntil AS workflowdelay, maxtabler.wfcount AS workflowcount, ';
         } else {
-            $fields .= 'null as workflowid, null as workflow, null AS workflowdelay, null AS workflowcount, ';
+            $fieldsr .= 'null as workflowid, null as workflow, null AS workflowdelay, null AS workflowcount, ';
+            $fieldsl .= 'null as workflowid, null as workflow, null AS workflowdelay, null AS workflowcount, ';
         }
 
         $params = [];
+        $time = time();
 
         if ($selectglobaldelays) {
-            $fields .= 'd.delayeduntil AS globaldelay';
+            $fieldsl .= 'd.delayeduntil AS globaldelay';
+            $fieldsr .= 'd.delayeduntil AS globaldelay';
         } else {
-            $fields .= 'null AS globaldelay';
+            $fieldsl .= 'null AS globaldelay';
+            $fieldsr .= 'null AS globaldelay';
         }
 
         if ($selectglobaldelays && !$selectseperatedelays) {
@@ -85,32 +91,81 @@ class delayed_courses_table extends \table_sql {
                     'JOIN {course} c ON c.id = d.courseid ' .
                     'JOIN {course_categories} cat ON c.category = cat.id';
         } else {
-            $from = '(' .
-                    'SELECT courseid, MAX(dw.id) AS maxid, COUNT(*) AS wfcount ' .
-                    'FROM {tool_lifecycle_delayed_workf} dw ' .
-                    'JOIN {tool_lifecycle_workflow} w ON dw.workflowid = w.id ' . // To make sure no outdated delays are counted.
-                    'WHERE dw.delayeduntil >= :time ' .
-                    'AND w.timeactive IS NOT NULL ';
-            $params['time'] = time();
+            $params[] = $time;
+            $params[] = $time;
 
+            $workflowfilterclause = '';
             if ($workflowfilterid) {
-                $from .= 'AND w.id = :workflowid';
-                $params['workflowid'] = $workflowfilterid;
+                $workflowfilterclause = 'AND w.id = ?';
+                $params[] = $workflowfilterid;
             }
 
-            $from .= 'GROUP BY courseid ' .
-                    ') maxtable ' .
-                    'JOIN {tool_lifecycle_delayed_workf} dw ON maxtable.maxid = dw.id ' .
-                    'JOIN {tool_lifecycle_workflow} w ON dw.workflowid = w.id ';
-
             if ($selectglobaldelays) {
-                $from .= 'FULL JOIN (' .
+                $left = '
+                ( SELECT
+                    courseid,
+                    MAX(dw.id) AS maxid,
+                    COUNT(*) AS wfcount
+                  FROM
+                    {tool_lifecycle_delayed_workf} dw
+                  JOIN
+                    {tool_lifecycle_workflow} w
+                  ON
+                    dw.workflowid = w.id ' . // To make sure no outdated delays are counted.
+                ' WHERE
+                    dw.delayeduntil >= ? AND
+                    w.timeactive IS NOT NULL
+                    '.$workflowfilterclause.'
+                  GROUP BY courseid) maxtablel
+               JOIN
+                  {tool_lifecycle_delayed_workf} dw
+               ON
+                maxtablel.maxid = dw.id
+               JOIN
+                  {tool_lifecycle_workflow} w
+               ON
+                  dw.workflowid = w.id 
+               LEFT JOIN (' .
                         'SELECT * FROM {tool_lifecycle_delayed} d ' .
-                        'WHERE d.delayeduntil > :time2 ' .
+                        'WHERE d.delayeduntil > ? ' .
                         ') d ON dw.courseid = d.courseid ' .
                         'JOIN {course} c ON c.id = COALESCE(dw.courseid, d.courseid) ';
 
-                $params['time2'] = time();
+                $right = '
+                ( SELECT
+                    courseid,
+                    MAX(dw.id) AS maxid,
+                    COUNT(*) AS wfcount
+                  FROM
+                    {tool_lifecycle_delayed_workf} dw
+                  JOIN
+                    {tool_lifecycle_workflow} w
+                  ON
+                    dw.workflowid = w.id ' . // To make sure no outdated delays are counted.
+                ' WHERE
+                    dw.delayeduntil >= ? AND
+                    w.timeactive IS NOT NULL
+                    '.$workflowfilterclause.'
+                  GROUP BY courseid) maxtabler
+               JOIN
+                  {tool_lifecycle_delayed_workf} dw
+               ON
+                  maxtabler.maxid = dw.id
+               JOIN
+                  {tool_lifecycle_workflow} w
+               ON
+                  dw.workflowid = w.id 
+               RIGHT JOIN (' .
+                        'SELECT * FROM {tool_lifecycle_delayed} d ' .
+                        'WHERE d.delayeduntil > ? ' .
+                        ') d ON dw.courseid = d.courseid ' .
+                        'JOIN {course} c ON c.id = COALESCE(dw.courseid, d.courseid) ';
+
+                // Make a full compatible FULL JOIN.
+                $from = $left.' UNION ALL '.$right;
+
+                $params[] = $time;
+                $params[] = $time;
             } else {
                 $from .= 'JOIN {course} c ON c.id = dw.courseid ';
             }
@@ -121,17 +176,17 @@ class delayed_courses_table extends \table_sql {
         $where = 'true ';
 
         if ($filterdata && $filterdata->category) {
-            $where .= 'AND cat.id = :catid ';
-            $params['catid'] = $filterdata->category;
+            $where .= 'AND cat.id = ? ';
+            $params[] = $filterdata->category;
         }
 
         if ($filterdata && $filterdata->coursename) {
             global $DB;
-            $where .= 'AND c.fullname LIKE :cname';
-            $params['cname'] = '%' . $DB->sql_like_escape($filterdata->coursename) . '%';
+            $where .= 'AND c.fullname LIKE ?';
+            $params[] = '%' . $DB->sql_like_escape($filterdata->coursename) . '%';
         }
 
-        $this->set_sql($fields, $from, $where, $params);
+        $this->set_sql($fieldsl, $from, $where, $params);
         $this->column_nosort = ['workflow', 'tools'];
         $this->define_columns(['coursefullname', 'category', 'workflow', 'tools']);
         $this->define_headers([

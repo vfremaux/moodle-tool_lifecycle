@@ -102,6 +102,11 @@ class deactivated_workflows_table extends workflow_table {
         $icon = 't/edit';
         $output .= $this->format_icon_link($action, $row->id, $icon, $alt);
 
+        $action = action::WORKFLOW_ACTIVATE;
+        $alt = get_string('activateworkflow', 'tool_lifecycle');
+        $icon = 't/go';
+        $output .= $this->format_icon_link($action, $row->id, $icon, $alt);
+
         if (workflow_manager::is_abortable($row->id)) {
             $alt = get_string('abortprocesses', 'tool_lifecycle');
             $icon = 't/stop';

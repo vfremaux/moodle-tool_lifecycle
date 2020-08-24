@@ -1,0 +1,50 @@
+
+
+
+<!-- tool_lifecycle/preview_globals -->
+<div id="lifecycle-preview-globals">
+
+    <h3>{{#str}}forworkflow, tool_lifecycle{{/str}}</h3>
+
+    <table class="table">
+        <tr>
+            <th scope="row" class="attribute">
+                {{#str}}totalcourses, tool_lifecycle{{/str}}
+            </th>
+            <td class="value">
+                {{totalcourses}}
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row" class="attribute">
+                {{#str}}totalexcluded, tool_lifecycle{{/str}}
+            </th>
+            <td class="value">
+                {{totalexcluded}}
+            </td>
+        </tr>
+    </table>
+
+    {{#hastriggers}}
+    <h3>{{#str}}pertrigger, tool_lifecycle{{/str}}</h3>
+    <table class="table">
+    {{/hastriggers}}
+
+    {{#triggers}}
+        <tr>
+            <th scope="row" class="attribute">
+                {{name}}
+            </th>
+            <td class="value">
+                {{excluded}}
+            </td>
+        </tr>
+    {{/triggers}}
+
+    {{#hastriggers}}
+    </table>
+    {{/hastriggers}}
+
+</div>
+<!-- /tool_lifecycle/preview_globals -->

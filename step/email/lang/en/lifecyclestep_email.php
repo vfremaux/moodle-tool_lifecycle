@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Email step';
+$string['pluginname'] = 'Email Step';
 
 $string['email_responsetimeout'] = 'Time the user has for the response';
 $string['email_subject'] = 'Subject template';
@@ -49,3 +49,4 @@ $string['email:preventdeletion'] = 'Prevent deletion';
 $string['keep_course'] = 'Keep course';
 $string['status_message_requiresattention'] = 'Course is marked for deletion';
 $string['action_prevented_deletion'] = '{$a} prevented deletion';
+$string['privacy:metadata'] = 'The Email Step plugin does not store any personal data.';
